@@ -28,9 +28,16 @@ namespace Start.Blog.Controllers
         public async Task<IActionResult> LoginAsync(LoginInput input)
         {
             var user = await _userManager.FindByNameAsync(input.Username);
-            if (user == null) return NotFound($"Not found with name:{input.Username}");
-            var isCorrect = await _userManager.CheckPasswordAsync(user, input.Password, BlogConsts.Salt);
+            if (user == null) return NotFound($"Not found with name：{input.Username}");
+            var isCorrect = await _userManager.CheckPasswordAsync(user,input.Password,BlogConsts.Salt);
             return isCorrect ? Ok("Login Success") : BadRequest("Invalid password");
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> RegisterAsync(RegisterInput input)
+        {
+            await _userManager.RegisterAsync(input.Username,input.Password,BlogConsts.Salt);
+            return Ok("Register Success");
         }
     }
 }
