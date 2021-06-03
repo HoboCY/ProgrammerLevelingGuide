@@ -4,12 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Start.Blog.Extensions;
 using Start.Blog.Helpers;
 using Start.Blog.Managers;
 
@@ -27,23 +23,28 @@ namespace Start.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(typeof(ISqlHelper<>), typeof(MysqlHelper<>));
-            services.AddScoped(typeof(IUserManager<>), typeof(UserManager<>));
-            services.AddControllers();
+            services.AddScoped(typeof(ISqlHelper<>),typeof(MysqlHelper<>));
+            services.AddScoped(typeof(IUserManager<>),typeof(UserManager<>));
+
+            services.AddControllers().ConfigureApiBehaviorOptions(opt =>
+            {
+                opt.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.ModelState.GetError());
+            });
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Start.Blog", Version = "v1" });
+                c.SwaggerDoc("v1",new OpenApiInfo { Title = "Start.Blog",Version = "v1" });
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app,IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Start.Blog v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json","Start.Blog v1"));
             }
 
             app.UseRouting();
