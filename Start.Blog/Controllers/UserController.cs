@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using Start.Blog.Extensions;
 using Start.Blog.Helpers;
+using Start.Blog.Managers;
 using Start.Blog.Models;
+using Start.Blog.ViewModels;
 
 namespace Start.Blog.Controllers
 {
@@ -14,11 +17,20 @@ namespace Start.Blog.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ISqlHelper<User> _sqlHelper;
+        private readonly IUserManager<User> _userManager;
 
-        public UserController(ISqlHelper<User> sqlHelper)
+        public UserController(IUserManager<User> userManager)
         {
-            _sqlHelper = sqlHelper;
+            _userManager = userManager;
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginAsync(LoginInput input)
+        {
+            var user = await _userManager.FindByNameAsync(input.Username);
+            if (user == null) return NotFound($"Not found with name:{input.Username}");
+            var isCorrect = await _userManager.CheckPasswordAsync(user, input.Password, BlogConsts.Salt);
+            return isCorrect ? Ok("Login Success") : BadRequest("Invalid password");
         }
     }
 }

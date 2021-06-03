@@ -25,8 +25,7 @@ namespace Start.Blog.Helpers
         {
             await using var conn = new MySqlConnection(_connectionString);
             var sql = $"SELECT * FROM {_typeName} WHERE Id = @Id";
-            var entity = await conn.QuerySingleOrDefaultAsync<T>(sql, new { id });
-            return entity == null ? throw new SqlNullValueException($"Not found {typeof(T).Name} entity with id:{id}") : entity;
+            return await conn.QuerySingleOrDefaultAsync<T>(sql, new { id });
         }
 
         public async Task<T> GetAsync(DynamicParameters parameters)
@@ -44,8 +43,7 @@ namespace Start.Blog.Helpers
                     sql.Append(" AND ");
             }
 
-            var entity = await conn.QuerySingleOrDefaultAsync<T>(sql.ToString(), parameters);
-            return entity == null ? throw new SqlNullValueException($"Not found {typeof(T).Name} entity") : entity;
+            return await conn.QuerySingleOrDefaultAsync<T>(sql.ToString(), parameters);
         }
 
         public async Task<IEnumerable<T>> GetAsync(Func<T, bool> expression)

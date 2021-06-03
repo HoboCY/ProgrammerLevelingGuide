@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Start.Blog.Models
 {
-    public class User
+    public class User : IUser
     {
         public int Id { get; set; }
 

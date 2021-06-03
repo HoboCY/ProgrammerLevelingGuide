@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Start.Blog.Helpers;
+using Start.Blog.Managers;
 
 namespace Start.Blog
 {
@@ -27,6 +28,7 @@ namespace Start.Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped(typeof(ISqlHelper<>), typeof(MysqlHelper<>));
+            services.AddScoped(typeof(IUserManager<>), typeof(UserManager<>));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
