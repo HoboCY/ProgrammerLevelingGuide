@@ -26,7 +26,7 @@ namespace Start.Blog
             services.AddScoped(typeof(ISqlHelper<>),typeof(MysqlHelper<>));
             services.AddScoped(typeof(IUserManager<>),typeof(UserManager<>));
 
-            services.AddControllers().ConfigureApiBehaviorOptions(opt =>
+            services.AddControllersWithViews().ConfigureApiBehaviorOptions(opt =>
             {
                 opt.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.ModelState.GetError());
             });
@@ -46,6 +46,8 @@ namespace Start.Blog
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json","Start.Blog v1"));
             }
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

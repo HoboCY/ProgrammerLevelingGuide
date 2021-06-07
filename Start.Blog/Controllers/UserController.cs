@@ -15,7 +15,7 @@ namespace Start.Blog.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : Controller
     {
         private readonly IUserManager<User> _userManager;
 
@@ -38,6 +38,12 @@ namespace Start.Blog.Controllers
         {
             await _userManager.RegisterAsync(input.Username,input.Password,BlogConsts.Salt);
             return Ok("Register Success");
+        }
+
+        [HttpGet]
+        public IActionResult LoginAsync()
+        {
+            return View();
         }
     }
 }
