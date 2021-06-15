@@ -14,7 +14,6 @@ using Start.Blog.ViewModels;
 namespace Start.Blog.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly IUserManager<User> _userManager;
@@ -24,7 +23,7 @@ namespace Start.Blog.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost("Login")]
+        [HttpPost("api/[controller]/Login")]
         public async Task<IActionResult> LoginAsync(LoginInput input)
         {
             var user = await _userManager.FindByNameAsync(input.Username);
@@ -33,15 +32,21 @@ namespace Start.Blog.Controllers
             return isCorrect ? Ok("Login Success") : BadRequest("Invalid password");
         }
 
-        [HttpPost("Register")]
+        [HttpPost("api/[controller]/Register")]
         public async Task<IActionResult> RegisterAsync(RegisterInput input)
         {
             await _userManager.RegisterAsync(input.Username,input.Password,BlogConsts.Salt);
             return Ok("Register Success");
         }
 
-        [HttpGet]
+        [HttpGet("[controller]/Login")]
         public IActionResult LoginAsync()
+        {
+            return View();
+        }
+
+        [HttpGet("[controller]/Register")]
+        public IActionResult RegisterAsync()
         {
             return View();
         }
