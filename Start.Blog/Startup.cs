@@ -29,7 +29,7 @@ namespace Start.Blog
             services.AddControllersWithViews().ConfigureApiBehaviorOptions(opt =>
             {
                 opt.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.ModelState.GetError());
-            });
+            }).AddRazorRuntimeCompilation();
 
             services.AddSwaggerGen(c =>
             {
