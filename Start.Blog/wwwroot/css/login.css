@@ -1,0 +1,18 @@
+﻿.login-container {
+}
+
+.loginForm {
+    width: 150px;
+    margin: 10px auto;
+}
+
+input {
+    margin-top: 10px;
+    height: 20px;
+}
+
+.loginForm button {
+    margin-top: 10px;
+    width:60px;
+    height: 20px;
+}

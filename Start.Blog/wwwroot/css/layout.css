@@ -1,0 +1,30 @@
+﻿header {
+    height: 70px;
+    background-color: paleturquoise;
+}
+
+.logo {
+    text-decoration: none;
+    font-size: 25px;
+    color: black;
+    margin: auto;
+    line-height: 70px;
+    margin-left: 50px;
+}
+
+.login-form {
+    float: right;
+    margin-right: 50px;
+    line-height: 70px;
+}
+
+.login,
+.register {
+    border-radius: 7px;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    border: none;
+    background-color: skyblue;
+    margin-left: 10px;
+}

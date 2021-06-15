@@ -1,4 +1,24 @@
 ﻿@{
     Layout = "_Layout";
 }
-<p>这里是Login</p>
+
+@section style
+{
+    <link href="~/css/login.css" rel="stylesheet" />
+    <script>
+        console.log(50);
+        var btn = document.getElementById("BtnLogin");
+        btn.onclick = function() {
+            console.log(111);
+        };
+    </script>
+}
+
+<div class="login-container">
+    <form id="loginForm" class="loginForm">
+        <input type="text" placeholder="Username" name="username">
+        <input type="password" placeholder="Password" name="password">
+        <button type="submit" id="BtnLogin">Login</button>
+    </form>
+</div>
+
