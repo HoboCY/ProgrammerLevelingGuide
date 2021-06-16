@@ -35,6 +35,8 @@ namespace Start.Blog.Controllers
         [HttpPost("api/[controller]/Register")]
         public async Task<IActionResult> RegisterAsync(RegisterInput input)
         {
+            var user = await _userManager.FindByNameAsync(input.Username);
+            if (user != null) return BadRequest("Username was existed");
             await _userManager.RegisterAsync(input.Username,input.Password,BlogConsts.Salt);
             return Ok("Register Success");
         }
