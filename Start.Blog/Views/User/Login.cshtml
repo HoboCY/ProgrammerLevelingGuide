@@ -1,24 +1,19 @@
 ﻿@{
+    ViewData["Title"] = "Login";
     Layout = "_Layout";
 }
 
-@section style
+@section Scripts
 {
     <link href="~/css/login.css" rel="stylesheet" />
-    <script>
-        console.log(50);
-        var btn = document.getElementById("BtnLogin");
-        btn.onclick = function() {
-            console.log(111);
-        };
-    </script>
+    <script src="~/js/login.js" type="text/javascript" asp-append-version="true"></script>
 }
 
 <div class="login-container">
-    <form id="loginForm" class="loginForm">
-        <input type="text" placeholder="Username" name="username">
-        <input type="password" placeholder="Password" name="password">
+    <div id="loginForm" class="loginForm">
+        <input type="text" placeholder="Username" id="username">
+        <input type="password" placeholder="Password" id="password">
         <button type="submit" id="BtnLogin">Login</button>
-    </form>
+    </div>
 </div>
 

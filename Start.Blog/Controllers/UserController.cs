@@ -45,10 +45,10 @@ namespace Start.Blog.Controllers
             return View();
         }
 
-        [HttpGet("[controller]/Register")]
-        public IActionResult RegisterAsync()
-        {
-            return View();
-        }
+        //[HttpGet("[controller]/Register")]
+        //public IActionResult RegisterAsync()
+        //{
+        //    return View();
+        //}
     }
 }
