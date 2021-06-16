@@ -9,10 +9,9 @@
         contentType: "application/json",
         success: function (data) {
             alert(data);
-            console.log(data);
         },
         error: function (error) {
-            console.log(error.responseText);
+            alert(error.responseText);
         }
     });
 });
