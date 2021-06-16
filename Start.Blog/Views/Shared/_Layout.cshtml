@@ -1,17 +1,10 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Hobo's Blog</title>
+    <title>@ViewData["Title"] - Hobo's Blog</title>
     <link href="~/css/global.css" rel="stylesheet" />
     <link href="~/css/layout.css" rel="stylesheet" />
     <script src="~/components/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
-    @*<environment include="Production">
-            <link href="~/components/Bootstrap/bootstrap.min.css" rel="stylesheet" />
-        </environment>
-        <environment exclude="Production">
-            <link href="~/components/Bootstrap/bootstrap.css" rel="stylesheet" />
-        </environment>*@
-    @RenderSection("style")
 </head>
 <body>
     <header>
@@ -24,5 +17,6 @@
     <main>
         @RenderBody()
     </main>
+    @await RenderSectionAsync("Scripts",required: false)
 </body>
 </html>
