@@ -9,6 +9,7 @@ using Start.Blog.Extensions;
 using Start.Blog.Helpers;
 using Start.Blog.Managers;
 using Start.Blog.Models;
+using Start.Blog.Services;
 using Start.Blog.ViewModels;
 
 namespace Start.Blog.Controllers
@@ -17,10 +18,12 @@ namespace Start.Blog.Controllers
     public class UserController : Controller
     {
         private readonly IUserManager<User> _userManager;
+        private readonly IUserService _userService;
 
-        public UserController(IUserManager<User> userManager)
+        public UserController(IUserManager<User> userManager,IUserService userService)
         {
             _userManager = userManager;
+            _userService = userService;
         }
 
         [HttpPost("api/[controller]/Login")]
@@ -29,7 +32,7 @@ namespace Start.Blog.Controllers
             var user = await _userManager.FindByNameAsync(input.Username);
             if (user == null) return NotFound($"Not found with name：{input.Username}");
             var isCorrect = await _userManager.CheckPasswordAsync(user,input.Password,BlogConsts.Salt);
-            return isCorrect ? Ok("Login Success") : BadRequest("Invalid password");
+            return isCorrect ? Ok(_userService.GenerateJwtToken(user.Id,user.Name)) : BadRequest("Invalid password");
         }
 
         [HttpPost("api/[controller]/Register")]
