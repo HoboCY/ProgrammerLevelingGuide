@@ -13,7 +13,7 @@ namespace Start.Blog.Models
 
         public string Content { get; set; }
 
-        public DateTime CreationTime { get; set; }
+        public DateTime CreationTime { get; set; } = DateTime.Now;
 
         public int UserId { get; set; }
     }
