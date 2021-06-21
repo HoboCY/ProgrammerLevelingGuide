@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Start.Blog.Extensions;
 using Start.Blog.Helpers;
 using Start.Blog.Managers;
+using Start.Blog.Services;
 
 namespace Start.Blog
 {
@@ -25,6 +27,16 @@ namespace Start.Blog
         {
             services.AddScoped(typeof(ISqlHelper<>),typeof(MysqlHelper<>));
             services.AddScoped(typeof(IUserManager<>),typeof(UserManager<>));
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddHttpContextAccessor();
+
+            services.AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    options.Audience = "http://localhost:5000/";
+                    options.Authority = "http://localhost:5000/";
+                });
 
             services.AddControllersWithViews().ConfigureApiBehaviorOptions(opt =>
             {
