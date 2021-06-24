@@ -26,9 +26,10 @@ namespace Start.Blog.Controllers
 
         [AllowAnonymous]
         [HttpGet("[controller]/Index")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var posts = await _sqlHelper.GetAsync();
+            return View(posts.ToList());
         }
 
         [HttpPost("api/[controller]")]
@@ -43,5 +44,12 @@ namespace Start.Blog.Controllers
             });
             return NoContent();
         }
-    }
+
+        [HttpDelete("api/[controller]/id")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            await _sqlHelper.DeleteAsync(id);
+            return NoContent();
+        }
+    } 
 }
