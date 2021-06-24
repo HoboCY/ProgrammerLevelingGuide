@@ -1,3 +1,8 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,17 +30,28 @@ namespace Start.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(typeof(ISqlHelper<>),typeof(MysqlHelper<>));
-            services.AddScoped(typeof(IUserManager<>),typeof(UserManager<>));
+            services.AddScoped(typeof(ISqlHelper<>), typeof(MysqlHelper<>));
+            services.AddScoped(typeof(IUserManager<>), typeof(UserManager<>));
             services.AddScoped<IUserService, UserService>();
 
             services.AddHttpContextAccessor();
 
-            services.AddAuthentication()
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Audience = "http://localhost:5000/";
-                    options.Authority = "http://localhost:5000/";
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidAudience = "http://localhost:5000/",
+                        ValidateIssuer = true,
+                        ValidIssuer = "http://localhost:5000/",
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromMinutes(30),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(BlogConsts.JwtKey)),
+                    };
                 });
 
             services.AddControllersWithViews().ConfigureApiBehaviorOptions(opt =>
@@ -45,18 +61,52 @@ namespace Start.Blog
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1",new OpenApiInfo { Title = "Start.Blog",Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Start.Blog", Version = "v1" });
+                var securityScheme = new OpenApiSecurityScheme()
+                {
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    Name = "Authorization",
+                    //参数添加在头部
+                    In = ParameterLocation.Header,
+                    //使用Authorize头部
+                    Type = SecuritySchemeType.Http,
+                    //内容为以 bearer开头
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                };
+
+                //把所有方法配置为增加bearer头部信息
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "bearerAuth"
+                            }
+                        },
+                        new string[] {}
+                    }
+                };
+
+                //注册到swagger中
+                c.AddSecurityDefinition("bearerAuth", securityScheme);
+                c.AddSecurityRequirement(securityRequirement);
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.UseAuthentication();
+
+            if(env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json","Start.Blog v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Start.Blog v1"));
             }
 
             app.UseStaticFiles();

@@ -8,5 +8,7 @@ namespace Start.Blog
     public class BlogConsts
     {
         public const string Salt = "StartBlog.Salt";
+
+        public const string JwtKey = "1234567890123456";
     }
 }

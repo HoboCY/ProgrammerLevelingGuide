@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MySqlConnector;
-using Start.Blog.Extensions;
-using Start.Blog.Helpers;
 using Start.Blog.Managers;
 using Start.Blog.Models;
 using Start.Blog.Services;

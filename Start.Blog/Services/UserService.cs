@@ -23,11 +23,11 @@ namespace Start.Blog.Services
         public int GetUserId()
         {
             var sub = _httpContextAccessor?.HttpContext?.User.FindFirst(u => u.Type == JwtRegisteredClaimNames.Sub)?.Value;
-            int.TryParse(sub,out int userId);
+            int.TryParse(sub, out int userId);
             return userId;
         }
 
-        public string GenerateJwtToken(int id,string name)
+        public string GenerateJwtToken(int id, string name)
         {
             var claims = new List<Claim>
             {
@@ -35,13 +35,13 @@ namespace Start.Blog.Services
                 new Claim(ClaimTypes.NameIdentifier, name)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("123456"));
-            var cred = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(BlogConsts.JwtKey));
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddMinutes(30);
 
             var token = new JwtSecurityToken(
-                issuer: "123456",
-                audience: "123456",
+                issuer: "http://localhost:5000/",
+                audience: "http://localhost:5000/",
                 claims,
                 expires: expires,
                 signingCredentials: cred
