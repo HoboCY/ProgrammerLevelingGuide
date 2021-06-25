@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Start.Blog.Managers;
 using Start.Blog.Models;
@@ -11,29 +16,39 @@ namespace Start.Blog.Controllers
     public class UserController : Controller
     {
         private readonly IUserManager<User> _userManager;
-        private readonly IUserService _userService;
 
-        public UserController(IUserManager<User> userManager,IUserService userService)
+        public UserController(IUserManager<User> userManager)
         {
             _userManager = userManager;
-            _userService = userService;
         }
 
         [HttpPost("api/[controller]/Login")]
         public async Task<IActionResult> LoginAsync(LoginInput input)
         {
             var user = await _userManager.FindByNameAsync(input.Username);
-            if (user == null) return NotFound($"Not found with name：{input.Username}");
-            var isCorrect = await _userManager.CheckPasswordAsync(user,input.Password,BlogConsts.Salt);
-            return isCorrect ? Ok(_userService.GenerateJwtToken(user.Id,user.Name)) : BadRequest("Invalid password");
+            if(user == null) return NotFound($"Not found with name：{input.Username}");
+            var isCorrect = await _userManager.CheckPasswordAsync(user, input.Password, BlogConsts.Salt);
+            if(!isCorrect) return BadRequest("Invalid password");
+            var claimsPrincipal = new ClaimsPrincipal();
+
+            var claims = new List<Claim>
+            {
+                new Claim("sub", user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Id.ToString())
+
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            return Ok("Login Success");
         }
 
         [HttpPost("api/[controller]/Register")]
         public async Task<IActionResult> RegisterAsync(RegisterInput input)
         {
             var user = await _userManager.FindByNameAsync(input.Username);
-            if (user != null) return BadRequest("Username was existed");
-            await _userManager.RegisterAsync(input.Username,input.Password,BlogConsts.Salt);
+            if(user != null) return BadRequest("Username was existed");
+            await _userManager.RegisterAsync(input.Username, input.Password, BlogConsts.Salt);
             return Ok("Register Success");
         }
 
