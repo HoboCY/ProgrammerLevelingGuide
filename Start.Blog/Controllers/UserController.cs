@@ -52,6 +52,13 @@ namespace Start.Blog.Controllers
             return Ok("Register Success");
         }
 
+        [HttpGet("[controller]/Logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Post");
+        }
+
         [HttpGet("[controller]/Login")]
         public IActionResult LoginAsync()
         {
