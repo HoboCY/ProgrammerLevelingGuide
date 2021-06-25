@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using static System.Int32;
 
 namespace Start.Blog.Services
 {
@@ -22,32 +23,9 @@ namespace Start.Blog.Services
 
         public int GetUserId()
         {
-            var sub = _httpContextAccessor?.HttpContext?.User.FindFirst(u => u.Type == JwtRegisteredClaimNames.Sub)?.Value;
-            int.TryParse(sub, out int userId);
-            return userId;
-        }
-
-        public string GenerateJwtToken(int id, string name)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, name)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(BlogConsts.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(30);
-
-            var token = new JwtSecurityToken(
-                issuer: "http://localhost:5000/",
-                audience: "http://localhost:5000/",
-                claims,
-                expires: expires,
-                signingCredentials: cred
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var sub = _httpContextAccessor?.HttpContext?.User.FindFirst(u => u.Type == "sub")?.Value;
+            TryParse(sub, out var userId);
+            return userId == 0 ? throw new ArgumentException("UserId Error,Please login again") : userId;
         }
     }
 }
