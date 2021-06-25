@@ -18,7 +18,7 @@ namespace Start.Blog.Controllers
         private readonly ISqlHelper<Post> _sqlHelper;
         private readonly IUserService _userService;
 
-        public PostController(ISqlHelper<Post> sqlHelper,IUserService userService)
+        public PostController(ISqlHelper<Post> sqlHelper, IUserService userService)
         {
             _sqlHelper = sqlHelper;
             _userService = userService;
@@ -35,12 +35,13 @@ namespace Start.Blog.Controllers
         [HttpPost("api/[controller]")]
         public async Task<IActionResult> CreateAsync(CreateBlogInput input)
         {
+            var currentUserId = _userService.GetUserId();
             await _sqlHelper.AddAsync(new Post
             {
                 Title = input.Title,
                 Content = input.Content,
                 CreationTime = DateTime.Now,
-                UserId = _userService.GetUserId()
+                UserId = currentUserId
             });
             return NoContent();
         }
@@ -48,8 +49,15 @@ namespace Start.Blog.Controllers
         [HttpDelete("api/[controller]/id")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
+            var post = await _sqlHelper.GetAsync(id);
+            if(post == null) return NotFound();
+
+            var currentUserId = _userService.GetUserId();
+
+            if(post.UserId != currentUserId) return BadRequest("Can't delete other people's posts");
+
             await _sqlHelper.DeleteAsync(id);
             return NoContent();
         }
-    } 
+    }
 }
