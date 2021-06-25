@@ -8,7 +8,5 @@ namespace Start.Blog.Services
     public interface IUserService
     {
         int GetUserId();
-
-        string GenerateJwtToken(int id, string name);
     }
 }
