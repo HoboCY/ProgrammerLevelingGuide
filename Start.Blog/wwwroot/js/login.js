@@ -9,6 +9,7 @@
         contentType: "application/json",
         success: function (data) {
             alert(data);
+            window.location.href = "/Post/Index";
         },
         error: function (error) {
             alert(error.responseText);

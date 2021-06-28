@@ -10,6 +10,7 @@
         contentType: "application/json",
         success: function (data) {
             alert(data);
+            window.location.href = "/User/Login";
         },
         error: function (error) {
             alert(error.responseText);
