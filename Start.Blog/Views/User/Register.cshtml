@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
+
+@section Scripts
+{
+    <link href="~/css/login.css" rel="stylesheet" />
+    <script src="~/js/register.js" type="text/javascript" asp-append-version="true"></script>
+}
+
+<div class="login-container">
+    <div id="loginForm" class="loginForm">
+        <input type="text" placeholder="Username" id="username">
+        <input type="password" placeholder="Password" id="password">
+        <input type="password" placeholder="Confirm Password" id="confirmPassword">
+        <button type="submit" id="BtnRegister">Register</button>
+    </div>
+</div>

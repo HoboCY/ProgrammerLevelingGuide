@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - Hobo's Blog</title>
+    <link href="~/css/global.css" rel="stylesheet" asp-append-version="true"/>
+    <link href="~/css/layout.css" rel="stylesheet" asp-append-version="true"/>
+    <script src="~/components/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <header>
+        <a class="logo" href="#">Hobo's Blog</a>
+        <div class="login-form">
+            @if(httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                <a class="logout" href="/User/Logout">Logout</a>
+            }
+            else
+            {
+                <a class="login" href="/User/Login">Login</a>
+                <a class="register" href="/User/Register">Register</a>
+            }
+        </div>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    @await RenderSectionAsync("Scripts",required: false)
+</body>
+</html>
