@@ -11,21 +11,19 @@
     <link href="~/css/post-index.css" rel="stylesheet" />
 }
 
-<main>
-    @if(Model.Any())
-    {
-        <ul>
-            @foreach(var post in Model)
-            {
-                <li>
-                    <a class="title">@post.Title</a>
-                    <p>@post.Content.Substring(0, post.Content.Length / 2)</p>
-                </li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p style="margin-left:10px;">没有帖子可显示</p>
-    }
-</main>
+@if(Model.Any())
+{
+    <ul>
+        @foreach(var post in Model)
+        {
+            <li>
+                <a class="title">@post.Title</a>
+                <p>@post.Content.Substring(0, post.Content.Length / 2)</p>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p style="margin-left:10px;">没有帖子可显示</p>
+}
