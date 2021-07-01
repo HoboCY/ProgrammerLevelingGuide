@@ -13,6 +13,8 @@ namespace Start.Blog.Helpers
 
         Task<T> GetAsync(DynamicParameters parameters);
 
+        Task<IEnumerable<T>> GetListAsync(DynamicParameters parameters);
+
         Task<IQueryable<T>> GetAsync(Func<T, bool> expression = null);
 
         Task AddAsync(T entity);

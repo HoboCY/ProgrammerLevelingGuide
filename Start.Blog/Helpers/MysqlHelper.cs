@@ -46,6 +46,24 @@ namespace Start.Blog.Helpers
             return await conn.QuerySingleOrDefaultAsync<T>(sql.ToString(), parameters);
         }
 
+        public async Task<IEnumerable<T>> GetListAsync(DynamicParameters parameters)
+        {
+            if(parameters == null || !parameters.ParameterNames.Any()) throw new NullReferenceException("Invalid parameters");
+            await using var conn = new MySqlConnection(_connectionString);
+            var sql = new StringBuilder($"SELECT * FROM {_typeName} WHERE ");
+
+            var parameterNames = parameters.ParameterNames.ToList();
+
+            foreach(var name in parameterNames)
+            {
+                sql.Append($"{name}=@{name}");
+                if(parameterNames.Last() != name)
+                    sql.Append(" AND ");
+            }
+
+            return await conn.QueryAsync<T>(sql.ToString(), parameters);
+        }
+
         public async Task<IQueryable<T>> GetAsync(Func<T, bool> expression = null)
         {
             await using var conn = new MySqlConnection(_connectionString);
