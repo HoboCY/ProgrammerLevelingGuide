@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
+using Start.Blog.Extensions;
 using Start.Blog.Helpers;
 using Start.Blog.Models;
 using Start.Blog.Services;
@@ -32,9 +34,36 @@ namespace Start.Blog.Controllers
             return View(posts.ToList());
         }
 
-        [HttpPost("api/[controller]")]
-        public async Task<IActionResult> CreateAsync(CreateBlogInput input)
+        [HttpGet("[controller]/manage")]
+        public async Task<IActionResult> Manage()
         {
+            var currentUserId = _userService.GetUserId();
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", currentUserId);
+            var posts = await _sqlHelper.GetListAsync(parameters);
+            return View(posts.ToList());
+        }
+
+        [HttpGet("[controller]/Create")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpGet("[controller]/Update/{id}")]
+        public async Task<IActionResult> Update(int id)
+        {
+            var post = await _sqlHelper.GetAsync(id);
+            if(post == null) return NotFound();
+
+            var currentUserId = _userService.GetUserId();
+            return post.UserId != currentUserId ? BadRequest("Can't edit other people's posts") : View(post);
+        }
+
+        [HttpPost("api/[controller]")]
+        public async Task<IActionResult> CreateAsync(CreatePostInput input)
+        {
+            if(input.Title.IsNullOrWhiteSpace() || input.Content.IsNullOrWhiteSpace()) return BadRequest("Fields can not empty.");
             var currentUserId = _userService.GetUserId();
             await _sqlHelper.AddAsync(new Post
             {
@@ -46,7 +75,7 @@ namespace Start.Blog.Controllers
             return NoContent();
         }
 
-        [HttpDelete("api/[controller]/id")]
+        [HttpDelete("api/[controller]/{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var post = await _sqlHelper.GetAsync(id);
@@ -57,6 +86,23 @@ namespace Start.Blog.Controllers
             if(post.UserId != currentUserId) return BadRequest("Can't delete other people's posts");
 
             await _sqlHelper.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpPut("api/[controller]/{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, UpdatePostInput input)
+        {
+            if(input.Title.IsNullOrWhiteSpace() || input.Content.IsNullOrWhiteSpace()) return BadRequest("Fields can not empty.");
+            var post = await _sqlHelper.GetAsync(id);
+            if(post == null) return NotFound();
+
+            post.Title = input.Title;
+            post.Content = input.Content;
+
+            var currentUserId = _userService.GetUserId();
+            if(currentUserId != post.UserId) return BadRequest("Can't edit other people's posts");
+
+            await _sqlHelper.UpdateAsync(post);
             return NoContent();
         }
     }
