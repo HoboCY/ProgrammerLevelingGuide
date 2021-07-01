@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Detail";
+}
+
+@using Start.Blog.ViewModels
+@model PostDetailViewModel
+
+@section Scripts
+{
+    <link href="~/css/detail.css" rel="stylesheet" />
+    <script src="~/js/detail.js" async type="text/javascript" asp-append-version="true"></script>
+}
+
+<div>
+    <input type="text" readonly="readonly" placeholder="Title" value="@Model.Title" />
+</div>
+<div>
+    <textarea id="content" readonly="" placeholder="Content">@Model.Content</textarea>
+</div>
+<div>
+    评论：
+    @if(Model.Comments.Any())
+    {
+        <ul>
+            @foreach(var comment in Model.Comments)
+            {
+                <li>
+                    <p>@comment.Username —— @comment.CreationTime</p>
+                    <p>@comment.Content</p>
+                </li>
+            }
+        </ul>
+    }
+    <div>
+        <input type="text" id="comment" placeholder="comment" aria-multiline="true" />
+    </div>
+    <div>
+        <input type="submit" value="Submit" id="submit" data-id="@Model.Id" />
+    </div>
+</div>
