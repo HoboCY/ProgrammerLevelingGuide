@@ -79,6 +79,15 @@ namespace Start.Blog.Helpers
             return entities;
         }
 
+        public async Task<IEnumerable<TResult>> GetListAsync<TResult>(string sql, DynamicParameters parameters = null)
+        {
+            await using var conn = new MySqlConnection(_connectionString);
+
+            return parameters != null
+                ? await conn.QueryAsync<TResult>(sql, parameters)
+                : await conn.QueryAsync<TResult>(sql);
+        }
+
         public async Task AddAsync(T entity)
         {
             await using var conn = new MySqlConnection(_connectionString);

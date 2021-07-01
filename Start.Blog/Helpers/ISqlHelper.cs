@@ -17,6 +17,8 @@ namespace Start.Blog.Helpers
 
         Task<IQueryable<T>> GetAsync(Func<T, bool> expression = null);
 
+        Task<IEnumerable<TResult>> GetListAsync<TResult>(string sql, DynamicParameters parameters = null);
+
         Task AddAsync(T entity);
 
         Task UpdateAsync(T entity);
