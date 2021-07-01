@@ -9,6 +9,7 @@
 @section Scripts
 {
     <link href="~/css/post-index.css" rel="stylesheet" />
+    <script src="~/js/index.js" type="text/javascript" async asp-append-version="true"></script>
 }
 
 <main>
@@ -17,9 +18,9 @@
         <ul>
             @foreach(var post in Model)
             {
-                <li>
-                    <a class="title">@post.Title</a>
-                    <p>@post.Content.Substring(0, post.Content.Length / 2)</p>
+                <li class="post-item" data-id="@post.Id">
+                    <a class="title" data-id="@post.Id">@post.Title</a>
+                    <p>@post.Content[..(post.Content.Length / 2)]</p>
                 </li>
             }
         </ul>

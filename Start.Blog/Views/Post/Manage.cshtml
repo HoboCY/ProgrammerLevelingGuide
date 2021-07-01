@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Manage";
+}
+
+@using Start.Blog.Models
+@model List<Post>
+
+@section Scripts
+{
+    <link href="~/css/manage.css" rel="stylesheet" asp-append-version="true"/>
+    <script async src="~/js/manage.js" type="text/javascript" asp-append-version="true"></script>
+}
+<div>
+    <a class="create">Create New</a>
+</div>
+
+@if(Model.Any())
+{
+    <table class="post-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>CreationTime</th>
+                <th>Operation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var post in Model)
+            {
+                <tr>
+                    <td>@post.Id</td>
+                    <td>@post.Title</td>
+                    <td>@post.CreationTime</td>
+                    <td>
+                        <a class="delete" data-id="@post.Id">Delete</a>
+                        <a class="edit" data-id="@post.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No Posts</p>
+}

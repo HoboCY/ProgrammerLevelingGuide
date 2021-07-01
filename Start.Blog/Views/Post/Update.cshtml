@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Update";
+}
+
+@using Start.Blog.Models
+@model Post
+
+@section Scripts
+{
+    <link href="~/css/create.css" rel="stylesheet" />
+    <script async src="~/js/update.js" type="text/javascript" asp-append-version="true"></script>
+}
+
+<div>
+    <input type="text" placeholder="Title" value="@Model.Title" id="title" />
+</div>
+<div>
+    <textarea id="content" cols="30" rows="100" placeholder="Content">@Model.Content</textarea>
+</div>
+<div>
+    <button type="submit" id="update" data-id="@Model.Id">Save</button>
+</div>
