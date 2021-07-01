@@ -3,17 +3,14 @@
     var password = $("#password").val();
     var confirmPassword = $("#confirmPassword").val();
 
-    $.ajax({
-        type: "POST",
-        url: "/api/user/register",
-        data: JSON.stringify({ username, password, confirmPassword }),
-        contentType: "application/json",
-        success: function (data) {
-            alert(data);
-            window.location.href = "/User/Login";
-        },
-        error: function (error) {
-            alert(error.responseText);
-        }
+    axios.post("/api/user/register", {
+        username: username,
+        password: password,
+        confirmPassword: confirmPassword
+    }).then(function (response) {
+        alert(response.data);
+        window.location.href = "/user/login";
+    }).catch(function (error) {
+        alert(error.response.data);
     });
 });

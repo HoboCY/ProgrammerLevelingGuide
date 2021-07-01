@@ -2,17 +2,13 @@
     var username = $("#username").val();
     var password = $("#password").val();
 
-    $.ajax({
-        type: "POST",
-        url: "/api/user/login",
-        data: JSON.stringify({ username, password }),
-        contentType: "application/json",
-        success: function (data) {
-            alert(data);
-            window.location.href = "/Post/Index";
-        },
-        error: function (error) {
-            alert(error.responseText);
-        }
+    axios.post("/api/user/login", {
+        username: username,
+        password: password
+    }).then(function (response) {
+        alert(response.data);
+        window.location.href = "/post/index";
+    }).catch(function (error) {
+        alert(error.response.data);
     });
 });

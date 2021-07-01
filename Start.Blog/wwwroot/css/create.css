@@ -1,0 +1,15 @@
+﻿main > div {
+    margin-left: 20px;
+}
+
+input {
+    width: 200px;
+    height: 30px;
+    margin-top: 20px;
+}
+
+textarea {
+    margin-top: 20px;
+    width: 500px;
+    height: 700px;
+}

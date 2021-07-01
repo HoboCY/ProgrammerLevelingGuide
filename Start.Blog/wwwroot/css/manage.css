@@ -1,0 +1,40 @@
+﻿table {
+    margin: 10px 20px;
+}
+
+    table.post-table {
+        font-family: verdana, arial, sans-serif;
+        font-size: 11px;
+        color: #333333;
+        border-width: 1px;
+        border-color: #666666;
+        border-collapse: collapse;
+    }
+
+        table.post-table th {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #dedede;
+        }
+
+        table.post-table td {
+            border-width: 1px;
+            padding: 15px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+        }
+
+.create {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 20px 10px;
+    background-color: greenyellow;
+}
+
+.create:hover {
+    cursor: pointer;
+}
