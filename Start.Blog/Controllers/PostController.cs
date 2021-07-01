@@ -18,12 +18,14 @@ namespace Start.Blog.Controllers
     public class PostController : Controller
     {
         private readonly ISqlHelper<Post> _sqlHelper;
+        private readonly ISqlHelper<Comment> _commentSqlHelper;
         private readonly IUserService _userService;
 
-        public PostController(ISqlHelper<Post> sqlHelper, IUserService userService)
+        public PostController(ISqlHelper<Post> sqlHelper, IUserService userService, ISqlHelper<Comment> commentSqlHelper)
         {
             _sqlHelper = sqlHelper;
             _userService = userService;
+            _commentSqlHelper = commentSqlHelper;
         }
 
         [AllowAnonymous]
@@ -54,10 +56,35 @@ namespace Start.Blog.Controllers
         public async Task<IActionResult> Update(int id)
         {
             var post = await _sqlHelper.GetAsync(id);
-            if(post == null) return NotFound();
+            if(post == null) return NotFound($"The post not found with id:{id}");
 
             var currentUserId = _userService.GetUserId();
             return post.UserId != currentUserId ? BadRequest("Can't edit other people's posts") : View(post);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("[controller]/Detail/{id}")]
+        public async Task<IActionResult> Detail(int id)
+        {
+            var post = await _sqlHelper.GetAsync(id);
+            if(post == null) return NotFound($"The post not found with id:{id}");
+
+            var sql = "SELECT u.Id,c.Content AS Content,u.Name AS Username,c.CreationTime AS CreationTime FROM User u LEFT JOIN Comment c ON u.Id = c.UserId WHERE c.PostId = @PostId";
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("PostId", post.Id);
+
+            var comments = await _sqlHelper.GetListAsync<CommentViewModel>(sql, parameters);
+
+            var postDetail = new PostDetailViewModel
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                Comments = comments.ToList()
+            };
+
+            return View(postDetail);
         }
 
         [HttpPost("api/[controller]")]
@@ -79,7 +106,7 @@ namespace Start.Blog.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var post = await _sqlHelper.GetAsync(id);
-            if(post == null) return NotFound();
+            if(post == null) return NotFound($"The post not found with id:{id}");
 
             var currentUserId = _userService.GetUserId();
 
@@ -94,7 +121,7 @@ namespace Start.Blog.Controllers
         {
             if(input.Title.IsNullOrWhiteSpace() || input.Content.IsNullOrWhiteSpace()) return BadRequest("Fields can not empty.");
             var post = await _sqlHelper.GetAsync(id);
-            if(post == null) return NotFound();
+            if(post == null) return NotFound($"The post not found with id:{id}");
 
             post.Title = input.Title;
             post.Content = input.Content;
@@ -103,6 +130,28 @@ namespace Start.Blog.Controllers
             if(currentUserId != post.UserId) return BadRequest("Can't edit other people's posts");
 
             await _sqlHelper.UpdateAsync(post);
+            return NoContent();
+        }
+
+        [HttpPost("api/[controller]/{id}/comment")]
+        public async Task<IActionResult> CommentAsync(int id, CommentPostInput input)
+        {
+            if (input.Content.IsNullOrWhiteSpace()) return BadRequest("Content can't empty");
+            
+            var post = await _sqlHelper.GetAsync(id);
+            if (post == null) return NotFound($"The post not found with id:{id}");
+
+            var currentUserId = _userService.GetUserId();
+
+            var comment = new Comment
+            {
+                Content = input.Content,
+                PostId = id,
+                UserId = currentUserId,
+                CreationTime = DateTime.Now
+            };
+
+            await _commentSqlHelper.AddAsync(comment);
             return NoContent();
         }
     }
