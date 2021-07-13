@@ -39,7 +39,7 @@ namespace Start.Blog
             services.AddScoped<IUserService, UserService>();
 
             services.AddHttpContextAccessor();
-           
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(opt =>
                 {
@@ -64,12 +64,17 @@ namespace Start.Blog
         {
             app.UseAuthentication();
 
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Start.Blog v1"));
             }
+            else
+            {
+                app.UseHsts();
+            }
+            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
@@ -79,7 +84,9 @@ namespace Start.Blog
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Post}/{action=Index}");
             });
         }
     }
