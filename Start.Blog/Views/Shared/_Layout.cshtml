@@ -15,16 +15,16 @@
     <header>
         <a class="logo" href="#">Hobo's Blog</a>
         <div class="login-form">
-            @if(httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            @*@if(httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 <a id="manage">Manage</a>
                 <a id="logout">Logout</a>
-            }
-            else
+            }*@
+            @*else
             {
                 <a id="login">Login</a>
                 <a id="register">Register</a>
-            }
+            }*@
         </div>
     </header>
     <main>
